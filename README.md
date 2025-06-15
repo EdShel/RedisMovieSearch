@@ -2,6 +2,9 @@
 Next.js sample app for searching movie titles using Redis' full text index.
 The metadata for films is exported from JSON [redis-movie-search/src/data](redis-movie-search/src/data)
 
+https://github.com/user-attachments/assets/72610d77-f653-4d1a-892f-d147f32e1d78
+
+
 ## How to run
 Make sure Node >= 20 is installed
 1. Clone the repository to your computer
