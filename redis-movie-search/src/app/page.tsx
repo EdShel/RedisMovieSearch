@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import SearchInput from "@/components/SearchInput";
 import SearchResults from "@/components/SearchResults";
 import MoviesSearchParamsParser from "@/utilities/MoviesSearchParamsParser";
+import Genres from "@/components/Genres";
+import Years from "@/components/Year";
 
 interface Props {
   searchParams: Promise<Record<string, unknown>>;
@@ -15,12 +17,15 @@ const Home: React.FC<Props> = async ({ searchParams }) => {
 
   return (
     <div className="min-h-screen bg-stone-100 p-8 font-[family-name:var(--font-inter)]">
-      <div className="m-auto max-w-5xl">
+      <div className="m-auto max-w-5xl pb-10">
         <h1 className="text-center text-6xl font-bold text-stone-900">
           Redis Movie Search
         </h1>
 
         <SearchInput />
+
+        <Genres />
+        <Years />
 
         <Suspense key={JSON.stringify(params)} fallback={"Loading..."}>
           <SearchResults movieSearchParams={movieSearchParams} />

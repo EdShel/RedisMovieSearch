@@ -4,7 +4,7 @@ import MoviesSearchParamsParser from "@/utilities/MoviesSearchParamsParser";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useMemo, useState } from "react";
 
-const SearchInput: React.FC<object> = ({}) => {
+const SearchInput: React.FC = () => {
   const params = useSearchParams();
   const movieParams = useMemo(
     () => MoviesSearchParamsParser.parse(params),
@@ -28,7 +28,7 @@ const SearchInput: React.FC<object> = ({}) => {
   };
 
   return (
-    <div>
+    <div className="mx-auto my-4 flex w-full max-w-md items-center gap-2">
       <input
         type="search"
         name="Search query"
@@ -41,9 +41,15 @@ const SearchInput: React.FC<object> = ({}) => {
             handleSearch();
           }
         }}
-        placeholder="Search movie (name or cast)"
+        placeholder="Search movie (title or cast)"
+        className="flex-1 rounded-l-md border border-gray-300 px-4 py-2 transition focus:ring-2 focus:ring-blue-500 focus:outline-none" 
       />
-      <button onClick={handleSearch}>Search</button>
+      <button
+        onClick={handleSearch}
+        className="rounded-r-md bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
+      >
+        Search
+      </button>
     </div>
   );
 };

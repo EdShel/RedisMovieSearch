@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import StreamArray from "stream-json/streamers/StreamArray";
 import { createClient } from "redis";
-import RedisMovie from "@/lib/RedisMovie";
+import RedisMovie from "@/lib/redis/types/RedisMovie";
 
 dotenv.config({ path: ".env.local" });
 
@@ -15,8 +15,37 @@ client.on("error", (err) => console.log("Redis Client Error", err));
 async function run() {
   await client.connect();
 
-  await client.ft.dropIndex("idx:movies", { DD: true });
+  await dropMoviesIndexIfExists();
+  await createMoviesIndex();
+  await createMovies();
+  await createGenres();
 
+  await client.quit();
+}
+
+run();
+
+type RawMovie = {
+  title: string;
+  year: number;
+  cast: string[];
+  genres: string[];
+  href?: string | null;
+  extract?: string;
+  thumbnail?: string;
+  thumbnail_width?: number;
+  thumbnail_height?: number;
+};
+
+async function dropMoviesIndexIfExists() {
+  try {
+    await client.ft.dropIndex("idx:movies", { DD: true });
+  } catch {
+    console.log("Failed to drop movies index");
+  }
+}
+
+async function createMoviesIndex() {
   console.log("Creating index");
   const indexStatus = await client.ft.create(
     "idx:movies",
@@ -48,12 +77,14 @@ async function run() {
     },
   );
   console.log(`Index created: ${indexStatus}`);
+}
+
+async function createMovies() {
+  console.log("Start - createMovies");
 
   const stream = fs
     .createReadStream("./src/data/movies.json")
     .pipe(StreamArray.withParser());
-
-  console.log("Start");
 
   let id = 0;
   let batch = client.multi();
@@ -89,21 +120,16 @@ async function run() {
     await batch.execAsPipeline();
   }
 
-  console.log("Movies are created");
-
-  await client.quit();
+  console.log("End - createMovies");
 }
 
-run();
+async function createGenres() {
+  console.log("Start - createGenres");
 
-type RawMovie = {
-  title: string;
-  year: number;
-  cast: string[];
-  genres: string[];
-  href?: string | null;
-  extract?: string;
-  thumbnail?: string;
-  thumbnail_width?: number;
-  thumbnail_height?: number;
-};
+  const genresJson = fs.readFileSync("./src/data/genres.json", "utf-8");
+  const genres = JSON.parse(genresJson) as string[];
+  console.log(`Inserting ${genres.length} genres`);
+  await client.json.set("genres", "$", genres);
+
+  console.log("End - createGenres");
+}

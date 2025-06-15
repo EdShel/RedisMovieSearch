@@ -12,7 +12,10 @@ export default class MoviesSearchParamsParser {
   static parse(query: URLSearchParams): MoviesSearchParams {
     return {
       query: query.get(QueryKey.QUERY) ?? "",
-      genres: (query.get(QueryKey.GENRES) ?? "").split("_").filter(Boolean),
+      genres: (query.get(QueryKey.GENRES) ?? "")
+        .split("_")
+        .map(decodeURIComponent)
+        .filter(Boolean),
       yearFrom: query.has(QueryKey.YEAR_FROM)
         ? Math.max(0, Number.parseInt(query.get(QueryKey.YEAR_FROM)!) || 0)
         : null,
@@ -33,7 +36,10 @@ export default class MoviesSearchParamsParser {
     }
 
     if (params.genres.length > 0) {
-      query.append(QueryKey.GENRES, params.genres.join("_"));
+      query.append(
+        QueryKey.GENRES,
+        params.genres.map(encodeURIComponent).join("_"),
+      );
     }
 
     if (Number.isFinite(params.yearFrom)) {
