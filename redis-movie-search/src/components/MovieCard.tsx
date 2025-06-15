@@ -1,5 +1,6 @@
 import RedisMovie from "@/lib/redis/types/RedisMovie";
 import React from "react";
+import FallbackImage from "./FallbackImage";
 
 interface Props {
   movie: RedisMovie;
@@ -10,15 +11,7 @@ const MovieCard: React.FC<Props> = ({ movie }) => {
     <div className="m-2 rounded-lg bg-white shadow-md">
       <div className="flex justify-center">
         <div className="flex h-100 w-full items-center justify-center overflow-hidden rounded-t-lg bg-gray-200">
-          {movie.thumbnail ? (
-            <img
-              src={movie.thumbnail}
-              alt={`${movie.title} poster`}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <span className="text-gray-500">No Image Available</span>
-          )}
+          <FallbackImage src={movie.thumbnail} alt={movie.title} />
         </div>
       </div>
       <div className="p-4">
@@ -33,3 +26,19 @@ const MovieCard: React.FC<Props> = ({ movie }) => {
 };
 
 export default MovieCard;
+
+export const MovieCardPlaceholder: React.FC<object> = () => {
+  return (
+    <div className="m-2 rounded-lg bg-white shadow-md">
+      <div className="flex justify-center">
+        <div className="flex h-100 w-full items-center justify-center overflow-hidden rounded-t-lg bg-gray-200">
+          <span className="text-gray-500">Loading...</span>
+        </div>
+      </div>
+      <div className="p-4">
+        <p className="text-2xl font-bold">Loading...</p>
+        <p className="line-clamp-2 text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
+};

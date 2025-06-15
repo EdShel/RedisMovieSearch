@@ -4,6 +4,12 @@ import StreamArray from "stream-json/streamers/StreamArray";
 import { createClient } from "redis";
 import RedisMovie from "@/lib/redis/types/RedisMovie";
 
+/** Adjust these setting if your Redis instance allows for more storage space */
+const settings = {
+  minYear: 1970,
+  maxYear: 2022,
+};
+
 dotenv.config({ path: ".env.local" });
 
 const client = createClient({
@@ -91,7 +97,7 @@ async function createMovies() {
   let batchSize = 0;
   for await (const { value } of stream) {
     const rawMovie = value as RawMovie;
-    if (rawMovie.year < 1970) {
+    if (rawMovie.year < settings.minYear || rawMovie.year > settings.maxYear) {
       continue;
     }
 

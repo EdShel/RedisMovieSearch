@@ -3,7 +3,8 @@ import SearchInput from "@/components/SearchInput";
 import SearchResults from "@/components/SearchResults";
 import MoviesSearchParamsParser from "@/utilities/MoviesSearchParamsParser";
 import Genres from "@/components/Genres";
-import Years from "@/components/Year";
+import Years from "@/components/Years";
+import SearchResultsPlaceholder from "@/components/SearchResultsPlaceholder";
 
 interface Props {
   searchParams: Promise<Record<string, unknown>>;
@@ -27,7 +28,10 @@ const Home: React.FC<Props> = async ({ searchParams }) => {
         <Genres />
         <Years />
 
-        <Suspense key={JSON.stringify(params)} fallback={"Loading..."}>
+        <Suspense
+          key={JSON.stringify(params)}
+          fallback={<SearchResultsPlaceholder />}
+        >
           <SearchResults movieSearchParams={movieSearchParams} />
         </Suspense>
       </div>
